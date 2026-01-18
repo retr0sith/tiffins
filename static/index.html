@@ -1,81 +1,67 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Etho Smart Home Hub</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #eef2f5;
-            margin: 0;
-            padding: 0;
-            text-align: center;
-        }
-        header {
-            background: #1f2937;
-            color: white;
-            padding: 20px;
-        }
-        button {
-            margin: 20px;
-            padding: 14px 24px;
-            font-size: 16px;
-            border: none;
-            background: #2563eb;
-            color: white;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #1d4ed8;
-        }
-        .device {
-            background: white;
-            margin: 15px auto;
-            padding: 15px;
-            width: 80%;
-            max-width: 500px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            text-align: left;
-        }
-        .label {
-            font-weight: bold;
-        }
-    </style>
+  <title>EthoHub Device Discovery</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f4f6f8;
+      padding: 20px;
+    }
+    button {
+      padding: 12px 18px;
+      margin: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .card {
+      background: white;
+      padding: 15px;
+      margin-top: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    pre {
+      background: #eee;
+      padding: 10px;
+      border-radius: 5px;
+    }
+  </style>
 </head>
 
 <body>
+  <h1>🏠 EthoHub Smart Home Discovery</h1>
+  <p>Click a button to discover devices</p>
 
-<header>
-    <h1>🏠 Etho Smart Home Hub</h1>
-    <p>Automatic Device Discovery</p>
-</header>
+  <button onclick="scanBluetooth()">🔵 Bluetooth Scan</button>
+  <button onclick="scanWifi()">📶 Wi-Fi Scan</button>
+  <button onclick="loadZigbee()">🟠 Zigbee Devices</button>
 
-<button onclick="scan()">🔍 Scan for Devices</button>
-
-<div id="output"></div>
+  <div class="card">
+    <h3>Results</h3>
+    <pre id="output">No scan yet</pre>
+  </div>
 
 <script>
-function scan() {
-    document.getElementById("output").innerHTML =
-        "<p>Scanning the network for smart devices...</p>";
+async function scanBluetooth() {
+  const res = await fetch("/bluetooth/scan");
+  const data = await res.json();
+  document.getElementById("output").textContent =
+    JSON.stringify(data, null, 2);
+}
 
-    fetch("/wifi/scan", { method: "POST" })
-        .then(res => res.json())
-        .then(data => {
-            let html = `<p>✅ Devices Found: ${data.device_count}</p>`;
-            data.devices.forEach(d => {
-                html += `
-                    <div class="device">
-                        <div><span class="label">Device:</span> ${d.name}</div>
-                        <div><span class="label">IP:</span> ${d.address}</div>
-                        <div><span class="label">Port:</span> ${d.port}</div>
-                        <div><span class="label">Connection:</span> Wi-Fi</div>
-                    </div>`;
-            });
-            document.getElementById("output").innerHTML = html;
-        });
+async function scanWifi() {
+  const res = await fetch("/wifi/scan", { method: "POST" });
+  const data = await res.json();
+  document.getElementById("output").textContent =
+    JSON.stringify(data, null, 2);
+}
+
+async function loadZigbee() {
+  const res = await fetch("/zigbee/devices");
+  const data = await res.json();
+  document.getElementById("output").textContent =
+    JSON.stringify(data, null, 2);
 }
 </script>
 
