@@ -1,11 +1,13 @@
 from fastapi import FastAPI, HTTPException
 from zigbee.mock_adapter import MockZigbeeAdapter
 from zigbee.clusters import CLUSTER_NAMES
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI(title="EthoHub Zigbee Bridge (Simulated)")
 
 zigbee = MockZigbeeAdapter()
 
+app.mount("/", StaticFiles(directory="static", html=True), name="static")
 @app.on_event("startup")
 async def startup():
     await zigbee.start()

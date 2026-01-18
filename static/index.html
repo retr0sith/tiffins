@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Etho Smart Home Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef2f5;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        header {
+            background: #1f2937;
+            color: white;
+            padding: 20px;
+        }
+        button {
+            margin: 20px;
+            padding: 14px 24px;
+            font-size: 16px;
+            border: none;
+            background: #2563eb;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        .device {
+            background: white;
+            margin: 15px auto;
+            padding: 15px;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            text-align: left;
+        }
+        .label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>🏠 Etho Smart Home Hub</h1>
+    <p>Automatic Device Discovery</p>
+</header>
+
+<button onclick="scan()">🔍 Scan for Devices</button>
+
+<div id="output"></div>
+
+<script>
+function scan() {
+    document.getElementById("output").innerHTML =
+        "<p>Scanning the network for smart devices...</p>";
+
+    fetch("/wifi/scan", { method: "POST" })
+        .then(res => res.json())
+        .then(data => {
+            let html = `<p>✅ Devices Found: ${data.device_count}</p>`;
+            data.devices.forEach(d => {
+                html += `
+                    <div class="device">
+                        <div><span class="label">Device:</span> ${d.name}</div>
+                        <div><span class="label">IP:</span> ${d.address}</div>
+                        <div><span class="label">Port:</span> ${d.port}</div>
+                        <div><span class="label">Connection:</span> Wi-Fi</div>
+                    </div>`;
+            });
+            document.getElementById("output").innerHTML = html;
+        });
+}
+</script>
+
+</body>
+</html>
