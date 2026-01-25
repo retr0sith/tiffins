@@ -6,7 +6,7 @@ app = FastAPI(title="EthoHub Zigbee Simulator")
 
 zigbee = MockZigbeeAdapter()
 
-app.mount("/", StaticFiles(directory="static", html=True), name="static")
+app.mount("/ui", StaticFiles(directory="static", html=True), name="static")
 
 @app.on_event("startup")
 async def startup():
