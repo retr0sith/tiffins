@@ -1,69 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>EthoHub Device Discovery</title>
-  <style>
-    body {
-      font-family: Arial;
-      background: #f4f6f8;
-      padding: 20px;
-    }
-    button {
-      padding: 12px 18px;
-      margin: 5px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    .card {
-      background: white;
-      padding: 15px;
-      margin-top: 15px;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    pre {
-      background: #eee;
-      padding: 10px;
-      border-radius: 5px;
-    }
-  </style>
+  <title>EthoHub Demo</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-  <h1>🏠 EthoHub Smart Home Discovery</h1>
-  <p>Click a button to discover devices</p>
 
-  <button onclick="scanBluetooth()">🔵 Bluetooth Scan</button>
-  <button onclick="scanWifi()">📶 Wi-Fi Scan</button>
-  <button onclick="loadZigbee()">🟠 Zigbee Devices</button>
+<h1>EthoHub - Zigbee Simulation</h1>
 
-  <div class="card">
-    <h3>Results</h3>
-    <pre id="output">No scan yet</pre>
-  </div>
+<button onclick="scan()">Scan Devices</button>
 
-<script>
-async function scanBluetooth() {
-  const res = await fetch("/bluetooth/scan");
-  const data = await res.json();
-  document.getElementById("output").textContent =
-    JSON.stringify(data, null, 2);
-}
+<div id="devices"></div>
 
-async function scanWifi() {
-  const res = await fetch("/wifi/scan", { method: "POST" });
-  const data = await res.json();
-  document.getElementById("output").textContent =
-    JSON.stringify(data, null, 2);
-}
-
-async function loadZigbee() {
-  const res = await fetch("/zigbee/devices");
-  const data = await res.json();
-  document.getElementById("output").textContent =
-    JSON.stringify(data, null, 2);
-}
-</script>
-
+<script src="app.js"></script>
 </body>
 </html>

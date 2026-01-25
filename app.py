@@ -1,34 +1,27 @@
 from fastapi import FastAPI, HTTPException
-from zigbee.mock_adapter import MockZigbeeAdapter
-from zigbee.clusters import CLUSTER_NAMES
 from fastapi.staticfiles import StaticFiles
+from zigbee.mock_adapter import MockZigbeeAdapter
 
+app = FastAPI(title="EthoHub Zigbee Simulator")
 
-
-app = FastAPI(title="EthoHub Zigbee Bridge (Simulated)")
-app.mount("/", StaticFiles(directory="static", html=True), name="static")
 zigbee = MockZigbeeAdapter()
 
+app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
 @app.on_event("startup")
 async def startup():
     await zigbee.start()
 
-@app.get("/zigbee/devices")
-async def list_devices():
-    return await zigbee.get_devices()
+@app.get("/zigbee/scan")
+async def scan_devices():
+    return await zigbee.scan()
 
-@app.post("/zigbee/command")
-async def send_command(payload: dict):
+@app.post("/zigbee/toggle")
+async def toggle_device(payload: dict):
     ieee = payload.get("ieee")
-    cluster = payload.get("cluster")
-    command = payload.get("command")
+    value = payload.get("value")
 
-    if not await zigbee.send_command(ieee, cluster, command):
-        raise HTTPException(400, "Command failed")
+    if not await zigbee.toggle(ieee, value):
+        raise HTTPException(400, "Device not found")
 
     return {"status": "ok"}
-
-@app.get("/")
-def root():
-    return {"status": "Zigbee simulation running"}
